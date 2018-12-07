@@ -7,7 +7,7 @@ require("dotenv").config();
 // moment
 var moment = require("moment");
 // node-spotify-api
-var nodeSpot = require("node-spotify-api");
+var nodeSpotifyApi = require("node-spotify-api");
 
 // KEYS
 
@@ -17,7 +17,10 @@ var bandsintown = keys.bands.apiKey;
 // omdb
 var omdb = keys.omdb.apiKey;
 // spotify
-var spotify = keys.spotify;
+var nodeSpot = new nodeSpotifyApi({
+    id: keys.spotify.id,
+    secret: keys.spotify.secret
+});
 
 // ARGUMENT VARIABLES
 
@@ -31,7 +34,7 @@ var input = process.argv.slice(3).join(" ");
 
 var bandQURL = "https://rest.bandsintown.com/artists/" + input + "/events?app_id=" + bandsintown;
 var omdbQURL;
-var spotifyQURL;
+var spotifyQURL = "https://api.spotify.com/v1/search?q=" + input + "&type=track";
 
 // APPLICATION
 
@@ -41,30 +44,58 @@ if (command === "concert-this") {
     console.log("\n" + input.toUpperCase() + "\n")
 
     // use axios to return concert info
-    axios.get(bandQURL).then(function(res){
+    axios.get(bandQURL).then(function (res) {
 
         // for each element in the object
-        for (i=0; i < res.data.length; i++){
+        for (i = 0; i < res.data.length; i++) {
 
             // log the venue, location, date
-            console.log(i+1);
+            console.log(i + 1);
             console.log("---" + "\n" +
-                        "Venue: " + res.data[i].venue.name + "\n" +
-                        "Location: " + res.data[i].venue.city + "\n" +
-                        "Date: " + moment(res.data[i].datetime).format("MM / DD / YYYY") + "\n\n"
+                "Venue: " + res.data[i].venue.name + "\n" +
+                "Location: " + res.data[i].venue.city + "\n" +
+                "Date: " + moment(res.data[i].datetime).format("MM / DD / YYYY") + "\n\n"
             );
 
         }
 
-    });
+    })
+        // if there is an error, return and error message and code
+        .catch(function (err) {
+            console.log("Error: " + err);
+        })
 }
-else if (command  === "spotify-this-song") {
+else if (command === "spotify-this-song") {
+
+    nodeSpot.request(spotifyQURL).then(function (res) {
+
+        // log the name of the searched song
+        console.log("\nSEARCH TERM: " + input + "\n")
+
+        // for each element in the object
+        for (i = 0; i < res.tracks.items.length; i++) {
+
+            // log the song, album, artist, and url
+            console.log(i + 1);
+            console.log("---" + "\n" +
+                "Song: " + res.tracks.items[i].name + "\n" +
+                "Album: " + res.tracks.items[i].album.name + "\n" +
+                "Artist: " + res.tracks.items[i].artists[0].name + "\n" +
+                "URL: " + res.tracks.items[i].external_urls.spotify + "\n\n"
+            );
+
+        }
+
+    })
+        // if there is an error, return and error message and code
+        .catch(function (err) {
+            console.log("Error: " + err);
+        })
+}
+else if (command === "movie-this") {
 
 }
-else if (command  === "movie-this") {
-
-}
-else if (command  === "do-what-it-says") {
+else if (command === "do-what-it-says") {
 
 } else {
     console.log("Please enter a command.");
