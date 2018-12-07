@@ -17,10 +17,7 @@ var bandsintown = keys.bands.apiKey;
 // omdb
 var omdb = keys.omdb.apiKey;
 // spotify
-var nodeSpot = new nodeSpotifyApi({
-    id: keys.spotify.id,
-    secret: keys.spotify.secret
-});
+var spotify = new nodeSpotifyApi(keys.spotify);
 
 // ARGUMENT VARIABLES
 
@@ -28,7 +25,6 @@ var nodeSpot = new nodeSpotifyApi({
 var command = process.argv[2];
 // user input
 var input = process.argv.slice(3).join(" ");
-// TEST - CAPTURE INPUT - DOD
 
 // URLs
 
@@ -60,37 +56,66 @@ if (command === "concert-this") {
         }
 
     })
-        // if there is an error, return and error message and code
-        .catch(function (err) {
-            console.log("Error: " + err);
-        })
+    // if there is an error, return error message and code
+    .catch(function (err) {
+        console.log("Error: " + err);
+    })
 }
 else if (command === "spotify-this-song") {
 
-    nodeSpot.request(spotifyQURL).then(function (res) {
+    if (!input) {
+        
+        spotify.request("https://api.spotify.com/v1/tracks/0hrBpAOgrt8RXigk83LLNE").then(function(res){
 
-        // log the name of the searched song
-        console.log("\nSEARCH TERM: " + input + "\n")
+            // log the name of the searched song
+            console.log("\nSEARCH TERM: the sign\n");
 
-        // for each element in the object
-        for (i = 0; i < res.tracks.items.length; i++) {
-
-            // log the song, album, artist, and url
-            console.log(i + 1);
+            console.log(1);
             console.log("---" + "\n" +
-                "Song: " + res.tracks.items[i].name + "\n" +
-                "Album: " + res.tracks.items[i].album.name + "\n" +
-                "Artist: " + res.tracks.items[i].artists[0].name + "\n" +
-                "URL: " + res.tracks.items[i].external_urls.spotify + "\n\n"
+                "Song: " + res.name + "\n" +
+                "Album: " + res.album.name + "\n" +
+                "Artist: " + res.artists[0].name + "\n" +
+                "URL: " + res.external_urls.spotify + "\n\n"
             );
 
-        }
-
-    })
-        // if there is an error, return and error message and code
+        })        
+        // if there is an error, return error message and code
         .catch(function (err) {
             console.log("Error: " + err);
         })
+    } 
+    else {
+
+        spotify.request(spotifyQURL).then(function (res) {
+
+            // log the name of the searched song
+            console.log("\nSEARCH TERM: " + input + "\n")
+    
+            // if there is no input
+          
+            // for each element in the object
+            for (i = 0; i < res.tracks.items.length; i++) {
+    
+                // log the song, album, artist, and url
+                console.log(i + 1);
+                console.log("---" + "\n" +
+                    "Song: " + res.tracks.items[i].name + "\n" +
+                    "Album: " + res.tracks.items[i].album.name + "\n" +
+                    "Artist: " + res.tracks.items[i].artists[0].name + "\n" +
+                    "URL: " + res.tracks.items[i].external_urls.spotify + "\n\n"
+                );
+    
+            }
+    
+        })
+        // if there is an error, return error message and code
+        .catch(function (err) {
+            console.log("Error: " + err);
+        })
+
+    }
+
+    
 }
 else if (command === "movie-this") {
 
