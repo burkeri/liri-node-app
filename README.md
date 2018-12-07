@@ -13,10 +13,12 @@ as vocal as my sister, Siri, but I can still grant you access to a plethora of d
 
 ----------------------------------
 
-Please enter a command to get started.
+Please enter a command to get started.</pre>
+
+![](./rm-gifs/liri-hello.gif)
 
 
-COMMANDS:
+<pre>COMMANDS:
 
 concert-this: Enter 'node liri.js concert-this <band name>' to find info on bands playing near you.</pre>
 
