@@ -24,30 +24,47 @@ var spotify = keys.spotify;
 // user command
 var command = process.argv[2];
 // user input
-var inputArray = [];
-for (i=3; i < process.argv.length; i++) {
-    inputArray.push(process.argv[i]);
+var input = process.argv.slice(3).join(" ");
+// TEST - CAPTURE INPUT - DOD
+
+// URLs
+
+var bandQURL = "https://rest.bandsintown.com/artists/" + input + "/events?app_id=" + bandsintown;
+var omdbQURL;
+var spotifyQURL;
+
+// APPLICATION
+
+if (command === "concert-this") {
+
+    // log the name of the band
+    console.log("\n" + input.toUpperCase() + "\n")
+
+    // use axios to return concert info
+    axios.get(bandQURL).then(function(res){
+
+        // for each element in the object
+        for (i=0; i < res.data.length; i++){
+
+            // log the venue, location, date
+            console.log(i+1);
+            console.log("---" + "\n" +
+                        "Venue: " + res.data[i].venue.name + "\n" +
+                        "Location: " + res.data[i].venue.city + "\n" +
+                        "Date: " + moment(res.data[i].datetime).format("MM / DD / YYYY") + "\n\n"
+            );
+
+        }
+
+    });
 }
-var input = inputArray.join(" ");
-console.log(input);
-
-// PROGRAM
-
-//concert-this
-//spotify-this-song
-//movie-this
-//do-what-it-says
-
-if (input === "concert-this") {
+else if (command  === "spotify-this-song") {
 
 }
-else if (input  === "spotify-this-song") {
+else if (command  === "movie-this") {
 
 }
-else if (input  === "movie-this") {
-
-}
-else if (input  === "do-what-it-says") {
+else if (command  === "do-what-it-says") {
 
 } else {
     console.log("Please enter a command.");
