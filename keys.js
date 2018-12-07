@@ -10,5 +10,5 @@ exports.bands = {
 };
 
 exports.omdb = {
-    apiKey: "162e08b0"
+    apiKey: "trilogy"
 };
